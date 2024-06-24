@@ -42,9 +42,9 @@ public class CoordsModule extends BaseModule {
    */
   public final TextColor defaultColorZ = TextColor.fromLegacyFormat(ChatFormatting.AQUA);
 
-  private Vec3 prevPos = new Vec3(0, 0, 0);
-  private Vec3 velocity = new Vec3(0, 0, 0);
-  private long changeTime = 0;
+  private Vec3 prevPos = Vec3.ZERO;
+  private Vec3 velocity = Vec3.ZERO;
+  private long velocityUpdateTime = 0;
 
   /**
    * Instantiates a new Coordinates module.
@@ -105,16 +105,16 @@ public class CoordsModule extends BaseModule {
       final int ticksPerSecond = 20;
       if (client.level != null) {
         final Vec3 currentPos = new Vec3(vehicle.getX(), vehicle.getY(), vehicle.getZ());
-        final long ticksSinceChange = client.level.getGameTime() - this.changeTime;
+        final long ticksSinceVelocityChange = client.level.getGameTime() - this.velocityUpdateTime;
         if (!this.prevPos.equals(currentPos)) {
-          this.velocity = new Vec3(this.prevPos.x() - vehicle.getX(), this.prevPos.y() - vehicle.getY(), this.prevPos.z() - vehicle.getZ());
-          this.changeTime = client.level.getGameTime();
-        } else if (ticksSinceChange > 1) {
-          this.velocity = new Vec3(0, 0, 0);
+          this.velocity = this.prevPos.subtract(currentPos);
+          this.velocityUpdateTime = client.level.getGameTime();
+        } else if (ticksSinceVelocityChange > 1) {
+          this.velocity = Vec3.ZERO;
         }
         this.prevPos = currentPos;
       } else {
-        this.velocity = new Vec3(0, 0, 0);
+        this.velocity = Vec3.ZERO;
       }
       final String vX = String.format("%.3f", this.velocity.x() * ticksPerSecond);
       final String vY = String.format("%.3f", this.velocity.y() * ticksPerSecond);
