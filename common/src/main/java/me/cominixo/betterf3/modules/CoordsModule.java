@@ -44,7 +44,7 @@ public class CoordsModule extends BaseModule {
 
   private Vec3 prevPos = Vec3.ZERO;
   private Vec3 velocity = Vec3.ZERO;
-  private long velocityUpdateTime = 0;
+  private long positionUpdateTime = 0;
 
   /**
    * Instantiates a new Coordinates module.
@@ -105,11 +105,11 @@ public class CoordsModule extends BaseModule {
       final int ticksPerSecond = 20;
       if (client.level != null) {
         final Vec3 currentPos = new Vec3(vehicle.getX(), vehicle.getY(), vehicle.getZ());
-        final long ticksSinceVelocityChange = client.level.getGameTime() - this.velocityUpdateTime;
+        final long ticksSincePositionChange = client.level.getGameTime() - this.positionUpdateTime;
         if (!this.prevPos.equals(currentPos)) {
           this.velocity = this.prevPos.subtract(currentPos);
-          this.velocityUpdateTime = client.level.getGameTime();
-        } else if (ticksSinceVelocityChange > 1) {
+          this.positionUpdateTime = client.level.getGameTime();
+        } else if (ticksSincePositionChange > 1) {
           this.velocity = Vec3.ZERO;
         }
         this.prevPos = currentPos;
